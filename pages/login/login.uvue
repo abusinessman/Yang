@@ -1,0 +1,332 @@
+<template>
+	<view class="login-container">
+		<!-- 顶部Logo区域 -->
+		<view class="header-section">
+			<image class="logo" src="/static/logo.png" mode="aspectFit"></image>
+			<text class="app-name">欢迎登录</text>
+		</view>
+		
+		<!-- 表单区域 -->
+		<view class="form-section">
+			<u-form ref="formRef" :model="formData" :rules="rules">
+				<!-- 账号输入框 -->
+				<u-form-item prop="account">
+					<u-input
+						v-model="formData.account"
+						placeholder="请输入账号"
+						border="bottom"
+						:clearable="true"
+						prefixIcon="account"
+						prefixIconStyle="font-size: 22px; color: #8A8A8A;"
+						@blur="validateAccount"
+					></u-input>
+				</u-form-item>
+				
+				<!-- 密码输入框 -->
+				<u-form-item prop="password">
+					<u-input
+						v-model="formData.password"
+						:type="passwordVisible ? 'text' : 'password'"
+						placeholder="请输入密码"
+						border="bottom"
+						:clearable="true"
+						prefixIcon="lock"
+						prefixIconStyle="font-size: 22px; color: #8A8A8A;"
+						@blur="validatePassword"
+					>
+					</u-input>
+				</u-form-item>
+			</u-form>
+			
+			<!-- 登录按钮 -->
+			<view class="button-wrapper">
+				<u-button
+					type="primary"
+					text="登录"
+					:disabled="!isFormValid || isLoading"
+					:loading="isLoading"
+					loadingText="登录中..."
+					:customStyle="!isFormValid ? 'height: 44px; border-radius: 8px; background-color: #D3D3D3; border-color: #D3D3D3; font-size: 16px;' : 'height: 44px; border-radius: 8px; background-color: #07C160; font-size: 16px;'"
+					@click="handleLogin"
+				></u-button>
+			</view>
+		</view>
+		
+		<!-- 底部区域 -->
+		<view class="footer-section">
+			<text class="copyright-text">© 2025 版权所有</text>
+			<view class="policy-links">
+				<text class="link-text" @click="openPrivacyPolicy">隐私政策</text>
+				<text class="separator">|</text>
+				<text class="link-text" @click="openUserAgreement">用户协议</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			// 表单数据
+			formData: {
+				account: '',
+				password: ''
+			},
+			// 验证规则
+			rules: {
+				account: [
+					{
+						required: true,
+						message: '请输入账号',
+						trigger: ['blur', 'change']
+					}
+				],
+				password: [
+					{
+						required: true,
+						message: '请输入密码',
+						trigger: ['blur', 'change']
+					},
+					{
+						min: 6,
+						message: '密码长度不能少于6位',
+						trigger: ['blur', 'change']
+					}
+				]
+			},
+			// 密码可见性
+			passwordVisible: false,
+			// 表单是否有效
+			isFormValid: false,
+			// 加载状态
+			isLoading: false,
+			// 错误提示
+			accountError: '',
+			passwordError: ''
+		}
+	},
+	
+	onLoad() {
+		// 页面加载时的初始化逻辑
+	},
+	
+	watch: {
+		// 监听账号变化
+		'formData.account'() {
+			this.checkFormValid()
+		},
+		// 监听密码变化
+		'formData.password'() {
+			this.checkFormValid()
+		}
+	},
+	
+	methods: {
+		// 切换密码可见性
+		togglePasswordVisible() {
+			this.passwordVisible = !this.passwordVisible
+		},
+		
+		// 验证账号
+		validateAccount() {
+			if (!this.formData.account || this.formData.account.trim() === '') {
+				this.accountError = '请输入账号'
+				return false
+			}
+			this.accountError = ''
+			return true
+		},
+		
+		// 验证密码
+		validatePassword() {
+			if (!this.formData.password || this.formData.password.trim() === '') {
+				this.passwordError = '请输入密码'
+				return false
+			}
+			if (this.formData.password.length < 6) {
+				this.passwordError = '密码长度不能少于6位'
+				return false
+			}
+			this.passwordError = ''
+			return true
+		},
+		
+		// 检查表单是否有效
+		checkFormValid() {
+			// 实时检查表单是否填写完整且有效
+			const accountValid = this.formData.account && this.formData.account.trim() !== ''
+			const passwordValid = this.formData.password && this.formData.password.length >= 6
+			
+			this.isFormValid = accountValid && passwordValid
+		},
+		
+		// 处理登录
+		handleLogin() {
+			// 防止重复提交
+			if (this.isLoading) {
+				return
+			}
+			
+			// 最后验证一次
+			const accountValid = this.validateAccount()
+			const passwordValid = this.validatePassword()
+			
+			if (!accountValid || !passwordValid) {
+				uni.showToast({
+					title: '请检查输入信息',
+					icon: 'none',
+					duration: 2000
+				})
+				return
+			}
+			
+			// 显示加载状态
+			this.isLoading = true
+			
+			// 模拟登录请求（这里需要替换为实际的登录API）
+			setTimeout(() => {
+				this.isLoading = false
+				
+				// 模拟登录成功
+				if (this.formData.account && this.formData.password) {
+					uni.showToast({
+						title: '登录成功',
+						icon: 'success',
+						duration: 2000
+					})
+					
+					// 延迟跳转到首页
+					setTimeout(() => {
+						uni.reLaunch({
+							url: '/pages/index/index'
+						})
+					}, 1500)
+				} else {
+					// 登录失败
+					uni.showToast({
+						title: '账号或密码错误',
+						icon: 'error',
+						duration: 2000
+					})
+				}
+			}, 1500)
+		},
+		
+		// 打开隐私政策
+		openPrivacyPolicy() {
+			uni.showToast({
+				title: '打开隐私政策',
+				icon: 'none'
+			})
+			// TODO: 跳转到隐私政策页面
+		},
+		
+		// 打开用户协议
+		openUserAgreement() {
+			uni.showToast({
+				title: '打开用户协议',
+				icon: 'none'
+			})
+			// TODO: 跳转到用户协议页面
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.login-container {
+	min-height: 100vh;
+	background-color: #F5F5F5;
+	display: flex;
+	flex-direction: column;
+	padding: 0 32rpx;
+}
+
+/* 顶部Logo区域 */
+.header-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 120rpx;
+	margin-bottom: 80rpx;
+	
+	.logo {
+		width: 160rpx;
+		height: 160rpx;
+		margin-bottom: 30rpx;
+	}
+	
+	.app-name {
+		font-size: 36rpx;
+		font-weight: 600;
+		color: #000000;
+	}
+}
+
+/* 表单区域 */
+.form-section {
+	background-color: #FFFFFF;
+	border-radius: 16rpx;
+	padding: 32rpx;
+	margin-bottom: 40rpx;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 按钮容器 */
+.button-wrapper {
+	margin-top: 40rpx;
+}
+
+/* 底部区域 */
+.footer-section {
+	margin-top: auto;
+	margin-bottom: 60rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	
+	.copyright-text {
+		font-size: 24rpx;
+		color: #8A8A8A;
+		margin-bottom: 16rpx;
+	}
+	
+	.policy-links {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		
+		.link-text {
+			font-size: 24rpx;
+			color: #07C160;
+		}
+		
+		.separator {
+			font-size: 24rpx;
+			color: #8A8A8A;
+			margin: 0 16rpx;
+		}
+	}
+}
+
+/* 表单项样式调整 */
+::v-deep .u-form-item {
+	margin-bottom: 32rpx;
+}
+
+::v-deep .u-input {
+	height: 88rpx;
+}
+
+/* 输入框下边框样式 */
+::v-deep .u-border-bottom::after {
+	border-bottom-color: #E5E5E5 !important;
+}
+
+/* 输入框聚焦时的下边框样式 */
+::v-deep .u-input--focused .u-border-bottom::after {
+	border-bottom-color: #07C160 !important;
+}
+</style>
+
