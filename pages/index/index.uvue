@@ -1,0 +1,121 @@
+<template>
+	<view class="container">
+		<image class="logo" src="/static/logo.png"></image>
+		<text class="title">{{title}}</text>
+		
+		<!-- 测试uview-plus组件 -->
+		<view class="test-section">
+			<text class="section-title">uview-plus组件测试</text>
+			
+			<!-- 按钮组件测试 -->
+			<view class="demo-item">
+				<u-button type="primary" text="主要按钮" @click="handleClick"></u-button>
+			</view>
+			
+			<view class="demo-item">
+				<u-button type="success" text="成功按钮" plain></u-button>
+				<u-button type="warning" text="警告按钮" plain></u-button>
+			</view>
+			
+			<!-- 图标组件测试 -->
+			<view class="demo-item">
+				<u-icon name="checkmark-circle-fill" color="#19be6b" size="28"></u-icon>
+				<u-icon name="close-circle-fill" color="#fa3534" size="28"></u-icon>
+				<u-icon name="info-circle-fill" color="#909399" size="28"></u-icon>
+			</view>
+			
+			<!-- 标签组件测试 -->
+			<view class="demo-item">
+				<u-tag text="标签" type="primary"></u-tag>
+				<u-tag text="成功" type="success"></u-tag>
+				<u-tag text="警告" type="warning"></u-tag>
+				<u-tag text="错误" type="error"></u-tag>
+			</view>
+			
+			<!-- 徽标组件测试 -->
+			<view class="demo-item">
+				<u-badge :value="10" :offset="[0, 0]">
+					<u-button text="消息"></u-button>
+				</u-badge>
+			</view>
+			
+			<!-- 加载图标测试 -->
+			<view class="demo-item">
+				<u-loading-icon mode="circle"></u-loading-icon>
+				<u-loading-icon mode="spinner" color="#2979ff"></u-loading-icon>
+			</view>
+			
+			<!-- 单元格组件测试 -->
+			<view class="demo-item">
+				<u-cell-group>
+					<u-cell title="单元格" isLink></u-cell>
+					<u-cell title="带图标" icon="setting" isLink></u-cell>
+					<u-cell title="带值" value="内容"></u-cell>
+				</u-cell-group>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				title: 'Hello uview-plus'
+			}
+		},
+		onLoad() {
+
+		},
+		methods: {
+			handleClick() {
+				uni.showToast({
+					title: 'uview-plus配置成功！',
+					icon: 'success'
+				})
+			}
+		}
+	}
+</script>
+
+<style>
+	.container {
+		padding: 20px;
+	}
+	
+	.logo {
+		height: 100px;
+		width: 100px;
+		margin: 50px auto 25px auto;
+		display: block;
+	}
+
+	.title {
+		font-size: 18px;
+		color: #8f8f94;
+		text-align: center;
+		display: block;
+		margin-bottom: 30px;
+	}
+	
+	.test-section {
+		margin-top: 20px;
+	}
+	
+	.section-title {
+		font-size: 16px;
+		font-weight: bold;
+		color: #303133;
+		margin-bottom: 15px;
+		display: block;
+	}
+	
+	.demo-item {
+		margin-bottom: 20px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+</style>
