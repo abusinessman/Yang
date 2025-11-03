@@ -1,0 +1,228 @@
+<template>
+	<view class="container">
+		<!-- 页面标题 -->
+		<view class="header">
+			<text class="page-title">管理</text>
+		</view>
+		
+		<!-- 用户信息卡片 -->
+		<view class="user-section">
+			<view class="user-card">
+				<view class="user-avatar">
+					<u-icon name="account" size="40" color="#fff"></u-icon>
+				</view>
+				<view class="user-info">
+					<text class="user-name">用户昵称</text>
+					<text class="user-desc">点击登录或注册</text>
+				</view>
+			</view>
+	</view>
+	
+	<!-- 功能菜单 -->
+	<view class="menu-section">
+			<!-- 账户管理 -->
+			<view class="menu-group">
+				<text class="group-title">账户管理</text>
+				<u-cell-group>
+					<u-cell title="我的账户" isLink @click="handleMenuClick('account')">
+						<template #icon>
+							<u-icon name="account" size="20" color="#2979ff" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+					<u-cell title="预算设置" isLink @click="handleMenuClick('budget')">
+						<template #icon>
+							<u-icon name="present" size="20" color="#19be6b" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+					<u-cell title="分类管理" isLink @click="handleMenuClick('category')">
+						<template #icon>
+							<u-icon name="list" size="20" color="#ff9900" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+				</u-cell-group>
+			</view>
+			
+			<!-- 数据管理 -->
+			<view class="menu-group">
+				<text class="group-title">数据管理</text>
+				<u-cell-group>
+					<u-cell title="数据备份" isLink @click="handleMenuClick('backup')">
+						<template #icon>
+							<u-icon name="cloud-upload" size="20" color="#2979ff" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+					<u-cell title="数据导出" isLink @click="handleMenuClick('export')">
+						<template #icon>
+							<u-icon name="download" size="20" color="#19be6b" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+				</u-cell-group>
+			</view>
+			
+			<!-- 系统设置 -->
+			<view class="menu-group">
+				<text class="group-title">系统设置</text>
+				<u-cell-group>
+					<u-cell title="通用设置" isLink @click="handleMenuClick('settings')">
+						<template #icon>
+							<u-icon name="setting" size="20" color="#606266" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+					<u-cell title="关于我们" isLink @click="handleMenuClick('about')">
+						<template #icon>
+							<u-icon name="info-circle" size="20" color="#909399" style="margin-right: 8px;"></u-icon>
+						</template>
+					</u-cell>
+				</u-cell-group>
+			</view>
+		</view>
+		
+		<!-- 退出登录按钮 -->
+		<view class="logout-section">
+			<u-button type="error" size="large" plain @click="handleLogout">退出登录</u-button>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				// 用户信息
+				userInfo: {
+					name: '',
+					avatar: ''
+				}
+			}
+		},
+		onLoad() {
+			// 加载用户信息
+			this.loadUserInfo()
+		},
+		methods: {
+			// 加载用户信息
+			loadUserInfo() {
+				// TODO: 从本地存储或后端加载用户信息
+				console.log('加载用户信息')
+			},
+			
+			// 菜单点击事件
+			handleMenuClick(type : string) {
+				uni.showToast({
+					title: `点击了: ${type}`,
+					icon: 'none'
+				})
+				// TODO: 根据不同的type跳转到对应页面
+			},
+			
+			// 退出登录
+			handleLogout() {
+				uni.showModal({
+					title: '提示',
+					content: '确定要退出登录吗？',
+					success: (res) => {
+						if (res.confirm) {
+							// TODO: 清除登录信息，跳转到登录页
+							uni.showToast({
+								title: '已退出登录',
+								icon: 'success'
+							})
+							// 延迟跳转到登录页
+							setTimeout(() => {
+								uni.reLaunch({
+									url: '/pages/login/login'
+								})
+							}, 1500)
+						}
+					}
+				})
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+	
+	/* 页面头部 */
+	.header {
+		background-color: #fff;
+		padding: 20px;
+		text-align: center;
+	}
+	
+	.page-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #303133;
+	}
+	
+	/* 用户信息区域 */
+	.user-section {
+		padding: 20px 15px;
+	}
+	
+	.user-card {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		border-radius: 12px;
+		padding: 25px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 15px;
+		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	}
+	
+	.user-avatar {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		background-color: rgba(255, 255, 255, 0.3);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	
+	.user-info {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+	
+	.user-name {
+		font-size: 18px;
+		font-weight: bold;
+		color: #fff;
+	}
+	
+	.user-desc {
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.8);
+	}
+	
+	/* 菜单区域 */
+	.menu-section {
+		padding: 0 15px;
+	}
+	
+	.menu-group {
+		margin-bottom: 20px;
+	}
+	
+	.group-title {
+		font-size: 14px;
+		color: #909399;
+		padding: 10px 0;
+		display: block;
+	}
+	
+	/* 退出登录区域 */
+	.logout-section {
+		padding: 30px 15px;
+	}
+</style>
+

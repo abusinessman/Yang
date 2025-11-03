@@ -1,0 +1,178 @@
+<template>
+	<view class="container">
+		<!-- 页面标题 -->
+		<view class="header">
+			<text class="page-title">账单</text>
+		</view>
+		
+		<!-- 统计卡片 -->
+		<view class="stats-section">
+			<view class="stats-card">
+				<view class="stats-item">
+					<text class="stats-label">本月支出</text>
+					<text class="stats-value expense">¥0.00</text>
+				</view>
+				<view class="stats-item">
+					<text class="stats-label">本月收入</text>
+					<text class="stats-value income">¥0.00</text>
+				</view>
+			</view>
+		</view>
+		
+		<!-- 账单列表 -->
+		<view class="bill-section">
+			<view class="section-header">
+				<text class="section-title">近期账单</text>
+			</view>
+			
+			<!-- 空状态占位 -->
+			<view class="empty-state">
+				<u-icon name="file-text" size="80" color="#c0c4cc"></u-icon>
+				<text class="empty-text">暂无账单记录</text>
+				<view class="empty-tip">
+					<text>开始记账，管理你的财务</text>
+				</view>
+			</view>
+			
+			<!-- 账单列表示例（暂时隐藏） -->
+			<!-- <u-cell-group>
+				<u-cell title="餐饮消费" value="-¥50.00" label="2025-11-03 12:30">
+					<template #icon>
+						<u-icon name="star" size="20" color="#2979ff"></u-icon>
+					</template>
+				</u-cell>
+			</u-cell-group> -->
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				// 统计数据
+				monthExpense: 0,
+				monthIncome: 0,
+				// 账单列表
+				billList: []
+			}
+		},
+		onLoad() {
+			// 页面加载时执行
+			this.loadBillData()
+		},
+		onShow() {
+			// 页面显示时执行（可能从其他页面返回）
+			console.log('账单页面显示')
+		},
+		methods: {
+			// 加载账单数据
+			loadBillData() {
+				// TODO: 这里将来会从后端加载数据
+				console.log('加载账单数据')
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+	
+	/* 页面头部 */
+	.header {
+		background-color: #fff;
+		padding: 20px;
+		text-align: center;
+	}
+	
+	.page-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #303133;
+	}
+	
+	/* 统计卡片 */
+	.stats-section {
+		padding: 15px;
+	}
+	
+	.stats-card {
+		background-color: #fff;
+		border-radius: 12px;
+		padding: 20px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	}
+	
+	.stats-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+	}
+	
+	.stats-label {
+		font-size: 14px;
+		color: #909399;
+	}
+	
+	.stats-value {
+		font-size: 24px;
+		font-weight: bold;
+	}
+	
+	.stats-value.expense {
+		color: #f56c6c;
+	}
+	
+	.stats-value.income {
+		color: #67c23a;
+	}
+	
+	/* 账单列表区域 */
+	.bill-section {
+		padding: 0 15px;
+		margin-top: 10px;
+	}
+	
+	.section-header {
+		padding: 15px 0;
+	}
+	
+	.section-title {
+		font-size: 16px;
+		font-weight: bold;
+		color: #303133;
+	}
+	
+	/* 空状态 */
+	.empty-state {
+		background-color: #fff;
+		border-radius: 12px;
+		padding: 60px 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 15px;
+	}
+	
+	.empty-text {
+		font-size: 16px;
+		color: #606266;
+	}
+	
+	.empty-tip {
+		margin-top: 5px;
+	}
+	
+	.empty-tip text {
+		font-size: 14px;
+		color: #909399;
+	}
+</style>
+

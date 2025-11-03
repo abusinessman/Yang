@@ -21,6 +21,30 @@
 			"style": {
 				"navigationBarTitleText": "首页"
 			}
+		},
+		{
+			"path": "pages/bill/bill",
+			"style": {
+				"navigationBarTitleText": "账单"
+			}
+		},
+		{
+			"path": "pages/record/record",
+			"style": {
+				"navigationBarTitleText": "记录"
+			}
+		},
+		{
+			"path": "pages/chart/chart",
+			"style": {
+				"navigationBarTitleText": "图表"
+			}
+		},
+		{
+			"path": "pages/manage/manage",
+			"style": {
+				"navigationBarTitleText": "管理"
+			}
 		}
 	],
 	"globalStyle": {
@@ -28,6 +52,44 @@
 		"navigationBarTitleText": "uni-app x",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#2979ff",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home-active.png"
+			},
+			{
+				"pagePath": "pages/bill/bill",
+				"text": "账单",
+				"iconPath": "static/tabbar/bill.png",
+				"selectedIconPath": "static/tabbar/bill-active.png"
+			},
+			{
+				"pagePath": "pages/record/record",
+				"text": "记录",
+				"iconPath": "static/tabbar/record.png",
+				"selectedIconPath": "static/tabbar/record-active.png"
+			},
+			{
+				"pagePath": "pages/chart/chart",
+				"text": "图表",
+				"iconPath": "static/tabbar/chart.png",
+				"selectedIconPath": "static/tabbar/chart-active.png"
+			},
+			{
+				"pagePath": "pages/manage/manage",
+				"text": "管理",
+				"iconPath": "static/tabbar/manage.png",
+				"selectedIconPath": "static/tabbar/manage-active.png"
+			}
+		]
 	},
 	"uniIdRouter": {}
 }

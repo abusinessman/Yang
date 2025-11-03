@@ -1,0 +1,212 @@
+<template>
+	<view class="container">
+		<!-- 页面标题 -->
+		<view class="header">
+			<text class="page-title">记录</text>
+		</view>
+		
+		<!-- 快速记账入口 -->
+		<view class="quick-action">
+			<u-button type="primary" size="large" @click="handleAddRecord">
+				<u-icon name="plus-circle" size="20" style="margin-right: 8px;"></u-icon>
+				<text>快速记账</text>
+			</u-button>
+		</view>
+		
+		<!-- 分类选择区域 -->
+		<view class="category-section">
+			<view class="section-header">
+				<text class="section-title">记账分类</text>
+			</view>
+			
+			<view class="category-grid">
+				<!-- 支出分类 -->
+				<view class="category-item" @click="handleCategoryClick('food')">
+					<view class="category-icon" style="background-color: #ff6b6b;">
+						<u-icon name="star" size="24" color="#fff"></u-icon>
+					</view>
+					<text class="category-name">餐饮</text>
+				</view>
+				
+				<view class="category-item" @click="handleCategoryClick('shopping')">
+					<view class="category-icon" style="background-color: #4ecb73;">
+						<u-icon name="shopping-cart" size="24" color="#fff"></u-icon>
+					</view>
+					<text class="category-name">购物</text>
+				</view>
+				
+				<view class="category-item" @click="handleCategoryClick('transport')">
+					<view class="category-icon" style="background-color: #3498db;">
+						<u-icon name="car" size="24" color="#fff"></u-icon>
+					</view>
+					<text class="category-name">交通</text>
+				</view>
+				
+				<view class="category-item" @click="handleCategoryClick('entertainment')">
+					<view class="category-icon" style="background-color: #f39c12;">
+						<u-icon name="play-circle" size="24" color="#fff"></u-icon>
+					</view>
+					<text class="category-name">娱乐</text>
+				</view>
+			</view>
+		</view>
+		
+		<!-- 今日记录 -->
+		<view class="today-section">
+			<view class="section-header">
+				<text class="section-title">今日记录</text>
+				<text class="section-extra">0笔</text>
+			</view>
+			
+			<!-- 空状态 -->
+			<view class="empty-state">
+				<u-icon name="order" size="60" color="#c0c4cc"></u-icon>
+				<text class="empty-text">今天还没有记账哦</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				// 今日记录列表
+				todayRecords: []
+			}
+		},
+		onLoad() {
+			// 页面加载
+			this.loadTodayRecords()
+		},
+		methods: {
+			// 添加记录
+			handleAddRecord() {
+				uni.showToast({
+					title: '打开记账页面',
+					icon: 'none'
+				})
+				// TODO: 跳转到记账页面或打开记账弹窗
+			},
+			
+			// 点击分类
+			handleCategoryClick(category : string) {
+				uni.showToast({
+					title: `选择分类: ${category}`,
+					icon: 'none'
+				})
+				// TODO: 打开该分类的记账页面
+			},
+			
+			// 加载今日记录
+			loadTodayRecords() {
+				// TODO: 从后端加载今日记录
+				console.log('加载今日记录')
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		min-height: 100vh;
+		background-color: #f5f5f5;
+	}
+	
+	/* 页面头部 */
+	.header {
+		background-color: #fff;
+		padding: 20px;
+		text-align: center;
+	}
+	
+	.page-title {
+		font-size: 20px;
+		font-weight: bold;
+		color: #303133;
+	}
+	
+	/* 快速操作 */
+	.quick-action {
+		padding: 20px 15px;
+	}
+	
+	/* 分类区域 */
+	.category-section {
+		padding: 0 15px;
+		margin-top: 10px;
+	}
+	
+	.section-header {
+		padding: 15px 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	.section-title {
+		font-size: 16px;
+		font-weight: bold;
+		color: #303133;
+	}
+	
+	.section-extra {
+		font-size: 14px;
+		color: #909399;
+	}
+	
+	.category-grid {
+		background-color: #fff;
+		border-radius: 12px;
+		padding: 20px;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 20px;
+	}
+	
+	.category-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+	}
+	
+	.category-icon {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	
+	.category-name {
+		font-size: 12px;
+		color: #606266;
+	}
+	
+	/* 今日记录 */
+	.today-section {
+		padding: 0 15px;
+		margin-top: 20px;
+	}
+	
+	/* 空状态 */
+	.empty-state {
+		background-color: #fff;
+		border-radius: 12px;
+		padding: 40px 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		margin-top: 10px;
+	}
+	
+	.empty-text {
+		font-size: 14px;
+		color: #909399;
+	}
+</style>
+
