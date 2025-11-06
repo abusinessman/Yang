@@ -1,69 +1,163 @@
 <template>
-	<view class="container">
-		<!-- 页面标题 -->
-		<view class="header">
-			<text class="page-title">记录</text>
+	<view class="page">
+		<!-- 顶部标题区域 -->
+		<view class="header-wrapper">
+			<view class="decoration-circle circle-1"></view>
+			<view class="decoration-circle circle-2"></view>
+			<text class="page-title">记录收入</text>
+			<text class="page-subtitle">Record Income</text>
 		</view>
 		
-		<!-- 快速记账入口 -->
-		<view class="quick-action">
-			<u-button type="primary" size="large" @click="handleAddRecord">
-				<u-icon name="plus-circle" size="20" style="margin-right: 8px;"></u-icon>
-				<text>快速记账</text>
-			</u-button>
-		</view>
-		
-		<!-- 分类选择区域 -->
-		<view class="category-section">
-			<view class="section-header">
-				<text class="section-title">记账分类</text>
+		<!-- 表单区域 -->
+		<view class="form-wrapper">
+			<!-- 日期选择 -->
+			<view class="form-item">
+				<view class="form-label">
+					<u-icon name="calendar" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">日期</text>
+				</view>
+				<view class="form-input" @click="showDatePicker = true">
+					<text class="input-text">{{ formData.date }}</text>
+				</view>
 			</view>
 			
-			<view class="category-grid">
-				<!-- 支出分类 -->
-				<view class="category-item" @click="handleCategoryClick('food')">
-					<view class="category-icon" style="background-color: #ff6b6b;">
-						<u-icon name="star" size="24" color="#fff"></u-icon>
-					</view>
-					<text class="category-name">餐饮</text>
+			<!-- 门店选择（使用Tag） -->
+			<view class="form-item form-item-column">
+				<view class="form-label">
+					<u-icon name="home" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">门店</text>
 				</view>
-				
-				<view class="category-item" @click="handleCategoryClick('shopping')">
-					<view class="category-icon" style="background-color: #4ecb73;">
-						<u-icon name="shopping-cart" size="24" color="#fff"></u-icon>
+				<view class="tags-grid">
+					<view 
+						class="tag-grid-item" 
+						v-for="(item, index) in stores" 
+						:key="index"
+					>
+						<up-tag 
+							:text="item.name" 
+							:plain="!item.checked" 
+							type="success"
+							size="large"
+							shape="circle"
+							:name="index"
+							@click="handleStoreClick"
+							:bgColor="item.checked ? '#4caf50' : ''"
+							:color="item.checked ? '#ffffff' : '#909399'"
+							:borderColor="item.checked ? '#4caf50' : '#e4e7ed'"
+						></up-tag>
 					</view>
-					<text class="category-name">购物</text>
 				</view>
-				
-				<view class="category-item" @click="handleCategoryClick('transport')">
-					<view class="category-icon" style="background-color: #3498db;">
-						<u-icon name="car" size="24" color="#fff"></u-icon>
+			</view>
+			
+			<!-- 分类选择（使用Tag） -->
+			<view class="form-item form-item-column">
+				<view class="form-label">
+					<u-icon name="grid" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">分类</text>
+				</view>
+				<view class="tags-grid">
+					<view 
+						class="tag-grid-item" 
+						v-for="(item, index) in categories" 
+						:key="index"
+					>
+						<up-tag 
+							:text="item.name" 
+							:plain="!item.checked" 
+							type="success"
+							size="large"
+							shape="circle"
+							:name="index"
+							@click="handleCategoryClick"
+							:bgColor="item.checked ? '#4caf50' : ''"
+							:color="item.checked ? '#ffffff' : '#909399'"
+							:borderColor="item.checked ? '#4caf50' : '#e4e7ed'"
+						></up-tag>
 					</view>
-					<text class="category-name">交通</text>
 				</view>
-				
-				<view class="category-item" @click="handleCategoryClick('entertainment')">
-					<view class="category-icon" style="background-color: #f39c12;">
-						<u-icon name="play-circle" size="24" color="#fff"></u-icon>
+			</view>
+			
+			<!-- 金额输入 -->
+			<view class="form-item">
+				<view class="form-label">
+					<u-icon name="rmb-circle" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">金额</text>
+				</view>
+				<view class="amount-input-wrapper">
+					<input 
+						class="amount-input" 
+						type="digit"
+						:value="formData.amount"
+						@input="onAmountInput"
+						placeholder="0.00"
+						placeholder-class="amount-placeholder"
+					/>
+				</view>
+			</view>
+			
+			<!-- 描述输入 -->
+			<view class="form-item form-item-column">
+				<view class="form-label">
+					<u-icon name="edit-pen" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">描述</text>
+				</view>
+				<textarea 
+					class="textarea-input" 
+					:value="formData.description"
+					@input="onDescriptionInput"
+					placeholder="请输入描述信息（选填）"
+					placeholder-class="textarea-placeholder"
+					maxlength="200"
+				></textarea>
+				<text class="char-count">{{ formData.description.length }}/200</text>
+			</view>
+			
+			<!-- 图片上传 -->
+			<view class="form-item form-item-column">
+				<view class="form-label">
+					<u-icon name="photo" size="18" color="#2e7d32"></u-icon>
+					<text class="label-text">图片</text>
+					<text class="label-optional">（选填）</text>
+				</view>
+				<view class="image-upload-wrapper">
+					<view 
+						class="image-item" 
+						v-for="(img, index) in formData.images" 
+						:key="index"
+					>
+						<image class="upload-image" :src="img" mode="aspectFill"></image>
+						<view class="image-delete" @click="deleteImage(index)">
+							<u-icon name="close" size="14" color="#fff"></u-icon>
+						</view>
 					</view>
-					<text class="category-name">娱乐</text>
+					<view 
+						class="upload-btn" 
+						v-if="formData.images.length < 3"
+						@click="chooseImage"
+					>
+						<u-icon name="plus" size="28" color="#4caf50"></u-icon>
+						<text class="upload-text">上传图片</text>
+					</view>
 				</view>
+				<text class="upload-tip">最多上传3张图片</text>
 			</view>
 		</view>
 		
-		<!-- 今日记录 -->
-		<view class="today-section">
-			<view class="section-header">
-				<text class="section-title">今日记录</text>
-				<text class="section-extra">0笔</text>
-			</view>
-			
-			<!-- 空状态 -->
-			<view class="empty-state">
-				<u-icon name="order" size="60" color="#c0c4cc"></u-icon>
-				<text class="empty-text">今天还没有记账哦</text>
+		<!-- 底部提交按钮 -->
+		<view class="submit-wrapper">
+			<view class="submit-btn" @click="handleSubmit">
+				<text class="submit-text">提交记录</text>
 			</view>
 		</view>
+		
+		<!-- 日期选择器 -->
+		<up-datetime-picker 
+			:show="showDatePicker" 
+			v-model="dateValue"
+			mode="date"
+			@confirm="onDateConfirm"
+			@cancel="showDatePicker = false"
+		></up-datetime-picker>
 	</view>
 </template>
 
@@ -71,142 +165,458 @@
 	export default {
 		data() {
 			return {
-				// 今日记录列表
-				todayRecords: []
+				// 表单数据
+				formData: {
+					date: this.formatDate(new Date()),
+					store: '',
+					category: '',
+					amount: '',
+					description: '',
+					images: []
+				},
+				
+				// 门店数据（使用Tag组件）
+				stores: [
+					{ name: '总店', checked: false },
+					{ name: '分店A', checked: false },
+					{ name: '分店B', checked: false },
+					{ name: '分店C', checked: false },
+					{ name: '网络店铺', checked: false },
+					{ name: '其他', checked: false },
+					{ name: '分店D', checked: false }
+				],
+				
+				// 分类数据（使用Tag组件）
+				categories: [
+					{ name: '销售收入', checked: false },
+					{ name: '服务费', checked: false },
+					{ name: '租金收入', checked: false },
+					{ name: '利息收入', checked: false },
+					{ name: '退款', checked: false },
+					{ name: '其他收入', checked: false }
+				],
+				
+				// 日期选择器显示状态
+				showDatePicker: false,
+				dateValue: Date.now()
 			}
 		},
+		
 		onLoad() {
-			// 页面加载
-			this.loadTodayRecords()
+			// 页面加载时的初始化
 		},
+		
 		methods: {
-			// 添加记录
-			handleAddRecord() {
-				uni.showToast({
-					title: '打开记账页面',
-					icon: 'none'
-				})
-				// TODO: 跳转到记账页面或打开记账弹窗
+			// 格式化日期
+			formatDate(date : Date) : string {
+				const year = date.getFullYear()
+				const month = String(date.getMonth() + 1).padStart(2, '0')
+				const day = String(date.getDate()).padStart(2, '0')
+				return `${year}-${month}-${day}`
 			},
 			
-			// 点击分类
-			handleCategoryClick(category : string) {
-				uni.showToast({
-					title: `选择分类: ${category}`,
-					icon: 'none'
-				})
-				// TODO: 打开该分类的记账页面
+			// 日期选择确认
+			onDateConfirm(e : any) {
+				this.formData.date = this.formatDate(new Date(e.value))
+				this.showDatePicker = false
 			},
 			
-			// 加载今日记录
-			loadTodayRecords() {
-				// TODO: 从后端加载今日记录
-				console.log('加载今日记录')
+			// 门店选择（Tag点击事件）
+			handleStoreClick(name : number) {
+				// 单选模式：取消其他选项，选中当前项
+				this.stores.forEach((item, index) => {
+					item.checked = index === name
+				})
+				this.formData.store = this.stores[name].name
+			},
+			
+			// 分类选择（Tag点击事件）
+			handleCategoryClick(name : number) {
+				// 单选模式：取消其他选项，选中当前项
+				this.categories.forEach((item, index) => {
+					item.checked = index === name
+				})
+				this.formData.category = this.categories[name].name
+			},
+			
+			// 金额输入
+			onAmountInput(e : any) {
+				this.formData.amount = e.detail.value
+			},
+			
+			// 描述输入
+			onDescriptionInput(e : any) {
+				this.formData.description = e.detail.value
+			},
+			
+			// 选择图片
+			chooseImage() {
+				uni.chooseImage({
+					count: 3 - this.formData.images.length,
+					sizeType: ['compressed'],
+					sourceType: ['album', 'camera'],
+					success: (res) => {
+						this.formData.images = this.formData.images.concat(res.tempFilePaths)
+					}
+				})
+			},
+			
+			// 删除图片
+			deleteImage(index : number) {
+				this.formData.images.splice(index, 1)
+			},
+			
+			// 表单验证
+			validateForm() : boolean {
+				if (!this.formData.store) {
+					uni.showToast({
+						title: '请选择门店',
+						icon: 'none'
+					})
+					return false
+				}
+				
+				if (!this.formData.category) {
+					uni.showToast({
+						title: '请选择分类',
+						icon: 'none'
+					})
+					return false
+				}
+				
+				if (!this.formData.amount || parseFloat(this.formData.amount) <= 0) {
+					uni.showToast({
+						title: '请输入有效金额',
+						icon: 'none'
+					})
+					return false
+				}
+				
+				return true
+			},
+			
+			// 提交表单
+			handleSubmit() {
+				if (!this.validateForm()) {
+					return
+				}
+				
+				// TODO: 调用后端接口提交数据
+				console.log('提交数据:', this.formData)
+				
+				uni.showLoading({
+					title: '提交中...'
+				})
+				
+				// 模拟提交
+				setTimeout(() => {
+					uni.hideLoading()
+					uni.showToast({
+						title: '提交成功',
+						icon: 'success',
+						duration: 2000
+					})
+					
+					// 提交成功后返回上一页或首页
+					setTimeout(() => {
+						uni.navigateBack()
+					}, 2000)
+				}, 1000)
 			}
 		}
 	}
 </script>
 
 <style scoped>
-	.container {
+	/* 页面容器 */
+	.page {
 		min-height: 100vh;
-		background-color: #f5f5f5;
+		background: linear-gradient(180deg, #e8f5e9 0%, #f5f5f5 50%, #ffffff 100%);
+		padding-bottom: 100px;
 	}
 	
-	/* 页面头部 */
-	.header {
-		background-color: #fff;
-		padding: 20px;
-		text-align: center;
+	/* 顶部标题区域 */
+	.header-wrapper {
+		position: relative;
+		width: 100%;
+		padding: 40px 20px 30px;
+		background: linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%);
+		border-radius: 0 0 20px 20px;
+		box-shadow: 0 4px 16px rgba(76, 175, 80, 0.15);
+		overflow: hidden;
+		margin-bottom: 20px;
+	}
+	
+	/* 装饰性圆圈 */
+	.decoration-circle {
+		position: absolute;
+		border-radius: 50%;
+		opacity: 0.06;
+		z-index: 0;
+	}
+	
+	.circle-1 {
+		width: 100px;
+		height: 100px;
+		background-color: #4caf50;
+		top: -30px;
+		right: -20px;
+	}
+	
+	.circle-2 {
+		width: 60px;
+		height: 60px;
+		background-color: #81c784;
+		bottom: -20px;
+		left: -10px;
 	}
 	
 	.page-title {
-		font-size: 20px;
-		font-weight: bold;
-		color: #303133;
+		font-size: 28px;
+		font-weight: 700;
+		color: #2e7d32;
+		display: block;
+		text-align: center;
+		position: relative;
+		z-index: 1;
+		letter-spacing: 1px;
 	}
 	
-	/* 快速操作 */
-	.quick-action {
-		padding: 20px 15px;
+	.page-subtitle {
+		font-size: 12px;
+		color: #81c784;
+		display: block;
+		text-align: center;
+		margin-top: 5px;
+		position: relative;
+		z-index: 1;
+		letter-spacing: 2px;
 	}
 	
-	/* 分类区域 */
-	.category-section {
+	/* 表单容器 */
+	.form-wrapper {
 		padding: 0 15px;
-		margin-top: 10px;
 	}
 	
-	.section-header {
-		padding: 15px 0;
+	/* 表单项 */
+	.form-item {
+		background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+		border-radius: 16px;
+		padding: 16px;
+		margin-bottom: 15px;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
 		align-items: center;
+		justify-content: space-between;
+		position: relative;
+		z-index: 1;
 	}
 	
-	.section-title {
-		font-size: 16px;
-		font-weight: bold;
-		color: #303133;
-	}
-	
-	.section-extra {
-		font-size: 14px;
-		color: #909399;
-	}
-	
-	.category-grid {
-		background-color: #fff;
-		border-radius: 12px;
-		padding: 20px;
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: 20px;
-	}
-	
-	.category-item {
-		display: flex;
+	.form-item-column {
 		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	/* 表单标签 */
+	.form-label {
+		display: flex;
 		align-items: center;
 		gap: 8px;
+		margin-bottom: 0;
 	}
 	
-	.category-icon {
-		width: 50px;
-		height: 50px;
+	.form-item-column .form-label {
+		margin-bottom: 12px;
+	}
+	
+	.label-text {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333333;
+	}
+	
+	.label-optional {
+		font-size: 12px;
+		color: #999999;
+		margin-left: 4px;
+	}
+	
+	/* 表单输入区域 */
+	.form-input {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 1;
+		justify-content: flex-end;
+	}
+	
+	.input-text {
+		font-size: 30px;
+		color: #333333;
+	}
+	
+	.input-text.placeholder {
+		color: #999999;
+	}
+	
+	/* Tag网格容器 - 支持自动换行，每行3个 */
+	.tags-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 10px;
+		width: 100%;
+	}
+	
+	/* Tag网格项 - 让tag撑满宽度 */
+	.tag-grid-item {
+		width: 100%;
+	}
+	
+	/* 让tag内文字居中 */
+	.tag-grid-item .u-tag__text {
+		text-align: center;
+	}
+	
+	
+	/* 金额输入 */
+	.amount-input-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		flex: 1;
+		justify-content: flex-end;
+	}
+	
+	.amount-input {
+		font-size: 20px;
+		font-weight: 700;
+		color: #2e7d32;
+		text-align: right;
+		flex: 1;
+		border: none;
+		background: transparent;
+	}
+	
+	.amount-placeholder {
+		color: #c0c4cc;
+	}
+	
+	/* 描述输入 */
+	.textarea-input {
+		width: 100%;
+		min-height: 100px;
+		padding: 12px;
+		font-size: 14px;
+		color: #333333;
+		background-color: #f5f5f5;
+		border-radius: 10px;
+		border: none;
+		line-height: 1.6;
+	}
+	
+	.textarea-placeholder {
+		color: #999999;
+	}
+	
+	.char-count {
+		font-size: 12px;
+		color: #999999;
+		margin-top: 8px;
+		text-align: right;
+		width: 100%;
+	}
+	
+	/* 图片上传 */
+	.image-upload-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		width: 100%;
+	}
+	
+	.image-item {
+		position: relative;
+		width: 100px;
+		height: 100px;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+	
+	.upload-image {
+		width: 100%;
+		height: 100%;
+	}
+	
+	.image-delete {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		width: 24px;
+		height: 24px;
+		background-color: rgba(0, 0, 0, 0.5);
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 	
-	.category-name {
-		font-size: 12px;
-		color: #606266;
-	}
-	
-	/* 今日记录 */
-	.today-section {
-		padding: 0 15px;
-		margin-top: 20px;
-	}
-	
-	/* 空状态 */
-	.empty-state {
-		background-color: #fff;
-		border-radius: 12px;
-		padding: 40px 20px;
+	.upload-btn {
+		width: 100px;
+		height: 100px;
+		border: 2px dashed #4caf50;
+		border-radius: 10px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 12px;
-		margin-top: 10px;
+		justify-content: center;
+		gap: 5px;
+		background-color: #f1f8f4;
 	}
 	
-	.empty-text {
-		font-size: 14px;
-		color: #909399;
+	.upload-text {
+		font-size: 12px;
+		color: #4caf50;
+	}
+	
+	.upload-tip {
+		font-size: 12px;
+		color: #999999;
+		margin-top: 8px;
+	}
+	
+	/* 提交按钮 */
+	.submit-wrapper {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 15px;
+		background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 30%, #ffffff 100%);
+		z-index: 100;
+	}
+	
+	.submit-btn {
+		width: 100%;
+		height: 50px;
+		background: linear-gradient(135deg, #4caf50, #66bb6a);
+		border-radius: 25px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+	}
+	
+	.submit-btn:active {
+		transform: scale(0.98);
+		opacity: 0.9;
+	}
+	
+	.submit-text {
+		font-size: 17px;
+		font-weight: 600;
+		color: #ffffff;
+		letter-spacing: 1px;
 	}
 </style>
 
